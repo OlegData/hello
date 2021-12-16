@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-and-test: 
+  build-and-test:
     docker:
       - image: cimg/python:3.7
 
@@ -8,31 +8,38 @@ jobs:
     working_directory: ~/repo
 
 
-    steps:
-      - checkout
+  steps:
+    - checkout
       
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fall back
-            - v1-dependencies-
+    - restore_cache:
+      keys:
+        - v1-dependencies-{{ checksum "requirements.txt" }}
+        # fall back
+        - v1-dependencies-
             
-      - run:
-          name: install dependencies
+    - run:
+      name: install dependencies
           # This assumes pytest is installed via the install-package step above
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            make install 
+      command: |
+        python3 -m venv venv
+        . venv/bin/activate
+        make install 
           
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+    - save_cache:
+      paths:
+          - ./venv
+      key: v1-dependencies-{{ checksum "requirements.txt" }}
           
-      - run:
-          name: run lint
-          command: |
-            . venv/bin/activate
-            make lint
+    - run:
+      name: run lint
+      command: |
+        . venv/bin/activate
+        make lint
             
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - build-and-test
