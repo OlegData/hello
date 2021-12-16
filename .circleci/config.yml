@@ -41,14 +41,15 @@ jobs:
           - venv/bin/activate
           make install 
           
-      - save_cashe:
-        paths:
+      - save_cache:
+          paths:
             - ./venv
-        key:  - v1-dependencies-{{ checksum "requirements.txt" }}
+          key:  - v1-dependencies-{{ checksum "requirements.txt" }}
+          
       - run:
-        name: run lint
+          name: run lint
             command: |
-          - venv/bin/activate
+          . venv/bin/activate
           make lint
             
 # Invoke jobs via workflows
